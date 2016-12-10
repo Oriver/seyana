@@ -34,24 +34,34 @@ namespace seyana
         private Util.TaskManage moveTask = null;
 
         private MainWindow syn = null;
+        private SeyanaVoice voice = null;
         private SerifuWindow sw = null;
         private ebifry ebi = null;
 
         enum moveMode
         {
-            STAND, EBI, RANDOMWALK
+            STAND, EBI, RANDOMWALK, JUMP
         }
         private moveMode nowMoveMode;
+
+        enum qtask
+        {
+            JUMP
+        }
+        private Queue<qtask> queue;
 
         public void init(MainWindow mw, SerifuWindow sw, ebifry ebi)
         {
             syn = mw;
+            voice = new SeyanaVoice();
             this.sw = sw;
             this.ebi = ebi;
             moveTask.cancel();
             thinkTask.start();
 
             nowMoveMode = moveMode.STAND;
+
+            queue = new Queue<qtask>();
         }
 
         /// <summary>
@@ -72,14 +82,45 @@ namespace seyana
             {
                 if (thinkTask.cancellationRequest()) thinkTask.getToken().ThrowIfCancellationRequested();
 
+                // queue処理
+                #region queue
+                if (queue.Count != 0)
+                {
+                    var top = queue.Dequeue();
+                    switch (top)
+                    {
+                        case qtask.JUMP:
+                            {
+                                switch(nowMoveMode)
+                                {
+                                    case moveMode.JUMP:
+                                        {
+                                            queue.Enqueue(qtask.JUMP);
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            nowMoveMode = moveMode.JUMP;
+                                            moveTask.start();
+                                            break;
+                                        }
+                                }
+                                break;
+                            }
+                    }
+                }
+                #endregion
+
                 // エビフライ判定
                 // 画面内にエビフライがあればそっちに向かう
-                if(ebi.live) {
+                if (ebi.live) {
                     manpukudo = ebisize * FPS;
-                    nowMoveMode = moveMode.EBI;
-                    moveTask.start();
+                    if (nowMoveMode != moveMode.EBI)
+                    {
+                        nowMoveMode = moveMode.EBI;
+                        moveTask.start();
+                    }
                 }
-
                 // ランダムウォーク判定
                 // 移動中でないかつランダムウォーク判定に成功するとランダムウォークが起こる
                 else if (moveTask.isCompleted() && Util.rnd.NextDouble() < randomWalkThreshold && manpukudo <= 0)
@@ -126,14 +167,17 @@ namespace seyana
 
             double speed = 10;
 
+            double t = 0;
+
             while(true)
             {
-                if (moveTask.isCompleted()) moveTask.getToken().ThrowIfCancellationRequested();
+                if (moveTask.cancellationRequest()) return;
 
                 switch(nowMoveMode)
                 {
                     case moveMode.STAND:
                         {
+                            System.Threading.Thread.Sleep(3000);
                             return;
                         }
                     case moveMode.EBI:
@@ -157,9 +201,6 @@ namespace seyana
                                 double dir = Util.rnd.NextDouble() * 2 * Math.PI;
                                 x = (int)((ebi.x + ebi.w / 2) + dst * Math.Cos(dir) - MainWindow.width / 2);
                                 y = (int)((ebi.y + ebi.h / 2) + dst * Math.Sin(dir) - MainWindow.height / 2);
-
-                                if (Math.Cos(dir) > 0) syn.faceRight();
-                                else syn.faceLeft();
 
                                 moveSeyana(x, y);
                                 ebi.eaten();
@@ -190,10 +231,35 @@ namespace seyana
 
                             break;
                         }
+                    case moveMode.JUMP:
+                        {
+                            // 重力加速度，ジャンプ力
+                            double g = 1.2;
+                            double v0 = 20;
+
+                            double dx = 0;
+                            double dy = - v0 + g * t;
+
+                            x += (int)dx;
+                            y += (int)dy;
+
+                            if (g * t > 2 * v0) nowMoveMode = moveMode.STAND;
+                            else moveSeyana(x, y);
+                            break;
+                        }
                 }
 
+                t++;
                 System.Threading.Thread.Sleep(1000 / FPS);
             }
+        }
+
+        public void clicked()
+        {
+            queue.Enqueue(qtask.JUMP);
+            queue.Enqueue(qtask.JUMP);
+            syn.say("ｾﾔﾅｰ");
+            voice.playSeyana();
         }
     }
 }

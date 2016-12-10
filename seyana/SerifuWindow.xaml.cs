@@ -34,23 +34,6 @@ namespace seyana
             Dispatcher.Invoke(() => this.serifu.Text = message);
         }
 
-        public void hideInvoke()
-        {
-            try
-            {
-                Dispatcher.Invoke(() => Hide());
-            }
-            catch (Exception e) { Console.WriteLine(e.StackTrace); }
-        }
-        public void showInvoke()
-        {
-            try
-            {
-                Dispatcher.Invoke(() => Show());
-            }
-            catch (Exception e) { Console.WriteLine(e.StackTrace); }
-        }
-
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);

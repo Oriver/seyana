@@ -70,6 +70,7 @@
     <Compile Include="ExDocument.cs" />
     <Compile Include="ExElement.cs" />
     <Compile Include="HttpSender.cs" />
+    <Compile Include="SeyanaVoice.cs" />
     <Compile Include="SerifuWindow.xaml.cs">
       <DependentUpon>SerifuWindow.xaml</DependentUpon>
     </Compile>
@@ -135,7 +136,7 @@
   <ItemGroup>
     <Content Include="HtmlAgilityPack.dll" />
     <Content Include="seyana_ebifry.wav" />
-    <Content Include="seyana_seyana.wav" />
+    <EmbeddedResource Include="seyana_seyana.wav" />
     <Content Include="seyana_utina.wav" />
     <Content Include="seyana_yade.wav" />
   </ItemGroup>

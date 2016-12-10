@@ -91,7 +91,7 @@ namespace seyana
         /// speak something
         /// </summary>
         /// <param name="message">something to say</param>
-        private void say(string message)
+        public void say(string message)
         {
             sw.say(message);
             sw.Show();
@@ -150,27 +150,10 @@ namespace seyana
             Close();
         }
 
-        public void hideInvoke()
-        {
-            try
-            {
-                Dispatcher.Invoke(() => Hide());
-            }
-            catch (Exception e) { Console.WriteLine(e.StackTrace); }
-        }
-        public void showInvoke()
-        {
-            try
-            {
-                Dispatcher.Invoke(() => Show());
-            }
-            catch (Exception e) { Console.WriteLine(e.StackTrace); }
-        }
-
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
-            say("ｾﾔﾅｰ");
+            brain.clicked();
         }
 
         protected override void OnClosed(EventArgs e)
