@@ -18,3 +18,5 @@ c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Deb
 c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Debug\ebifry.baml
 c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\bin\Debug\HtmlAgilityPack.dll
 c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Debug\seyana_Content.g.cs
+c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Debug\ConfigWindow.g.cs
+c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Debug\ConfigWindow.baml

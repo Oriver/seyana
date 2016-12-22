@@ -29,6 +29,7 @@ namespace seyana
         }
 
         private const int FPS = 30;
+        public static double scale = 1;
 
         private Util.TaskManage thinkTask = null;
         private Util.TaskManage moveTask = null;
@@ -56,12 +57,13 @@ namespace seyana
             voice = new SeyanaVoice();
             this.sw = sw;
             this.ebi = ebi;
-            moveTask.cancel();
+            nowMoveMode = moveMode.STAND;
+            moveTask.start();
             thinkTask.start();
 
-            nowMoveMode = moveMode.STAND;
-
             queue = new Queue<qtask>();
+
+            speed = 8;
         }
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace seyana
                 #region queue
                 if (queue.Count != 0)
                 {
-                    var top = queue.Dequeue();
+                    var top = queue.Peek();
                     switch (top)
                     {
                         case qtask.JUMP:
@@ -95,13 +97,13 @@ namespace seyana
                                 {
                                     case moveMode.JUMP:
                                         {
-                                            queue.Enqueue(qtask.JUMP);
                                             break;
                                         }
                                     default:
                                         {
+                                            queue.Dequeue();
                                             nowMoveMode = moveMode.JUMP;
-                                            moveTask.start();
+                                            move_t = 0;
                                             break;
                                         }
                                 }
@@ -118,18 +120,16 @@ namespace seyana
                     if (nowMoveMode != moveMode.EBI)
                     {
                         nowMoveMode = moveMode.EBI;
-                        moveTask.start();
                     }
                 }
                 // ランダムウォーク判定
                 // 移動中でないかつランダムウォーク判定に成功するとランダムウォークが起こる
-                else if (moveTask.isCompleted() && Util.rnd.NextDouble() < randomWalkThreshold && manpukudo <= 0)
+                else if (nowMoveMode == moveMode.STAND && Util.rnd.NextDouble() < randomWalkThreshold && manpukudo <= 0)
                 {
                     randomWalk();
                 }
 
                 if (manpukudo > 0) manpukudo--;
-
 
                 System.Threading.Thread.Sleep(1000 / FPS);
             }
@@ -137,14 +137,14 @@ namespace seyana
 
         private void randomWalk()
         {
-            toX = Util.rnd.Next(MainWindow.width, Util.screenwidth - MainWindow.width);
-            toY = Util.rnd.Next(MainWindow.height, Util.screenheight - MainWindow.height);
+            toX = Util.rnd.Next(MainWindow.w, Util.screenwidth - MainWindow.w);
+            toY = Util.rnd.Next(MainWindow.h, Util.screenheight - MainWindow.h);
             nowMoveMode = moveMode.RANDOMWALK;
-
-            moveTask.start();
         }
 
         private int toX, toY;
+        double move_t = 0;
+        public double speed { private set; get; }
 
         /// <summary>
         /// seyana move
@@ -164,11 +164,7 @@ namespace seyana
             moveTask.getToken().ThrowIfCancellationRequested();
             int x = MainWindow.x;
             int y = MainWindow.y;
-
-            double speed = 10;
-
-            double t = 0;
-
+            
             while(true)
             {
                 if (moveTask.cancellationRequest()) return;
@@ -177,15 +173,15 @@ namespace seyana
                 {
                     case moveMode.STAND:
                         {
-                            System.Threading.Thread.Sleep(3000);
-                            return;
+                            System.Threading.Thread.Sleep(Util.rnd.Next(100, 500));
+                            break;
                         }
                     case moveMode.EBI:
                         {
-                            int dx = (ebi.x + ebi.w / 2) - (x + MainWindow.width / 2);
-                            int dy = (ebi.y + ebi.h / 2) - (y + MainWindow.height / 2);
+                            int dx = (ebi.x + ebi.w / 2) - (x + MainWindow.w / 2);
+                            int dy = (ebi.y + ebi.h / 2) - (y + MainWindow.h / 2);
                             double dst = Math.Sqrt(dx * dx + dy * dy);
-                            if (dst > 10)
+                            if (dst > 70)
                             {
                                 double dir = Math.Atan2(dy, dx);
                                 x = (int)(x + speed * Math.Cos(dir));
@@ -199,8 +195,8 @@ namespace seyana
                             {
                                 dst = Util.rnd.NextDouble() * 60;
                                 double dir = Util.rnd.NextDouble() * 2 * Math.PI;
-                                x = (int)((ebi.x + ebi.w / 2) + dst * Math.Cos(dir) - MainWindow.width / 2);
-                                y = (int)((ebi.y + ebi.h / 2) + dst * Math.Sin(dir) - MainWindow.height / 2);
+                                x = (int)((ebi.x + ebi.w / 2) + dst * Math.Cos(dir) - MainWindow.w / 2);
+                                y = (int)((ebi.y + ebi.h / 2) + dst * Math.Sin(dir) - MainWindow.h / 2);
 
                                 moveSeyana(x, y);
                                 ebi.eaten();
@@ -238,19 +234,19 @@ namespace seyana
                             double v0 = 20;
 
                             double dx = 0;
-                            double dy = - v0 + g * t;
+                            double dy = - v0 + g * move_t;
 
                             x += (int)dx;
                             y += (int)dy;
 
-                            if (g * t > 2 * v0) nowMoveMode = moveMode.STAND;
+                            if (g * move_t > 2 * v0) nowMoveMode = moveMode.STAND;
                             else moveSeyana(x, y);
                             break;
                         }
                 }
 
-                t++;
-                System.Threading.Thread.Sleep(1000 / FPS);
+                move_t++;
+                System.Threading.Thread.Sleep((int)(1000 / FPS / (nowMoveMode ==moveMode.EBI ? 1.7 : 1.0)));
             }
         }
 
@@ -260,6 +256,23 @@ namespace seyana
             queue.Enqueue(qtask.JUMP);
             syn.say("ｾﾔﾅｰ");
             voice.playSeyana();
+        }
+
+        public void openConfig()
+        {
+            var cw = new ConfigWindow(this);
+            cw.Show();
+        }
+        public void closeConfig(ConfigWindow.ConfigEvent ce, ConfigWindow cw)
+        {
+            if(ce == ConfigWindow.ConfigEvent.OKEVENT)
+            {
+                scale = cw.scale;
+                speed = cw.speed;
+                syn.setScale();
+            }
+
+            cw.Close();
         }
     }
 }

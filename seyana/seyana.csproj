@@ -63,6 +63,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ConfigWindow.xaml.cs">
+      <DependentUpon>ConfigWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ebifry.xaml.cs">
       <DependentUpon>ebifry.xaml</DependentUpon>
     </Compile>
@@ -76,6 +79,10 @@
     </Compile>
     <Compile Include="SeyanaBrain.cs" />
     <Compile Include="Util.cs" />
+    <Page Include="ConfigWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ebifry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -125,21 +132,22 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="seyana.png" />
+    <Resource Include="img\seyana.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="fukidashi.png" />
+    <Resource Include="img\fukidashi.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ebifry.png" />
+    <Resource Include="img\ebifry.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="HtmlAgilityPack.dll" />
-    <Content Include="seyana_ebifry.wav" />
-    <EmbeddedResource Include="seyana_seyana.wav" />
-    <Content Include="seyana_utina.wav" />
-    <Content Include="seyana_yade.wav" />
+    <EmbeddedResource Include="se\seyana_ebifry.wav" />
+    <EmbeddedResource Include="se\seyana_seyana.wav" />
+    <EmbeddedResource Include="se\seyana_utina.wav" />
+    <EmbeddedResource Include="se\seyana_yade.wav" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

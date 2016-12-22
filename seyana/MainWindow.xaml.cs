@@ -27,10 +27,26 @@ namespace seyana
 
         public static int x { get; private set; }
         public static int y { get; private set; }
-        public static int width { get; private set; }
-        public static int height { get; private set; }
+        private const int WIDTH = 300, HEIGHT = 300;
+        private static int width, height;
+        public static int w
+        {
+            get
+            {
+                return (int)(width * SeyanaBrain.scale);
+            }
+            private set { width = value; }
+        }
+        public static int h
+        {
+            get
+            {
+                return (int)(height * SeyanaBrain.scale);
+            }
+            private set { height = value; }
+        }
         public Point toPoint() { return new Point(x, y); }
-        public Util.rect toRect() { return new Util.rect(x, y, width, height); }
+        public Util.rect toRect() { return new Util.rect(x, y, w, h); }
 
         public MainWindow()
         {
@@ -49,10 +65,12 @@ namespace seyana
             x = 100;
             y = 200;
 
+            Width = WIDTH;
+            Height = HEIGHT;
             var p0 = PointToScreen(new Point(0, 0));
             var p1 = PointToScreen(new Point(Width, Height));
-            width = (int)(p1.X - p0.X);
-            height = (int)(p1.Y - p0.Y);
+            w = (int)(p1.X - p0.X);
+            h = (int)(p1.Y - p0.Y);
 
             setPosition();
         }
@@ -108,17 +126,29 @@ namespace seyana
             do
             {
                 double ang = Util.rnd.NextDouble() * 2 * Math.PI;
-                double x0 = (x + width / 2) + 100 * Math.Cos(ang) - ebi.w / 2;
-                double y0 = (y + height / 2) + 100 * Math.Sin(ang) - ebi.h / 2;
+                double x0 = (x + w / 2) + 100 * Math.Cos(ang) - ebi.w / 2;
+                double y0 = (y + h / 2) + 100 * Math.Sin(ang) - ebi.h / 2;
                 ebi.x = (int)x0;
                 ebi.y = (int)y0;
                 setPosition(ebi, (int)x0, (int)y0);
             } while (!Util.isInScreen(ebi.toRect()));
-            ebi.spawn(50);
+            ebi.spawn((int)(100 / SeyanaBrain.scale / SeyanaBrain.scale));
         }
 
-        public void faceLeft() { Dispatcher.Invoke(() => invert.ScaleX = 1); }
-        public void faceRight() { Dispatcher.Invoke(() => invert.ScaleX = -1); }
+        public void setScale()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Width = WIDTH * SeyanaBrain.scale;
+                Height = HEIGHT * SeyanaBrain.scale;
+                invert.ScaleX = SeyanaBrain.scale * (invert.ScaleX < 0 ? -1 : 1);
+                invert.ScaleY = SeyanaBrain.scale * (invert.ScaleY < 0 ? -1 : 1);
+            });
+            
+        }
+
+        public void faceLeft() { Dispatcher.Invoke(() => invert.ScaleX = Math.Abs(invert.ScaleX)); }
+        public void faceRight() { Dispatcher.Invoke(() => invert.ScaleX = -Math.Abs(invert.ScaleX)); }
 
         /// <summary>
         /// action something(to test)
@@ -138,6 +168,11 @@ namespace seyana
         private void Summon_Clicked(object sender, RoutedEventArgs args)
         {
             createEbi();
+        }
+
+        private void Config_Clicked(object sender, RoutedEventArgs args)
+        {
+            brain.openConfig();
         }
 
         /// <summary>

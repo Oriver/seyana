@@ -9,8 +9,5 @@
 //------------------------------------------------------------------------------
 
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("htmlagilitypack.dll")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("seyana_ebifry.wav")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("seyana_utina.wav")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("seyana_yade.wav")]
 
 

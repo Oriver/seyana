@@ -13,6 +13,6 @@
         ShowInTaskbar="False"
         Topmost="True">
     <Grid>
-        <Image Source="ebifry.png"/>
+        <Image Source="img/ebifry.png"/>
     </Grid>
 </Window>

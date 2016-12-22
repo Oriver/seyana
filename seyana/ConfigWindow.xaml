@@ -1,0 +1,46 @@
+﻿<Window x:Class="seyana.ConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:seyana"
+        mc:Ignorable="d"
+        Title="Config" Height="360" Width="480">
+    <DockPanel>
+        <Grid DockPanel.Dock="Bottom">
+            <WrapPanel HorizontalAlignment="Right" Margin="5,0">
+                <Button Content="OK" Click="OK_Click" HorizontalAlignment="Right" Width="70" Margin="5,0"/>
+                <Button Content="キャンセル" Click="Cancel_Click" HorizontalAlignment="Center" Width="70" Margin="5,0"/>
+            </WrapPanel>
+        </Grid>
+        <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5">
+            <TabItem Header="一般">
+                <DockPanel Background="#FFF0F0F0">
+                    <Grid DockPanel.Dock="Top">
+                        <WrapPanel>
+                            <Label Content="サイズ" Width="70" Margin="5"/>
+                            <ComboBox Width="70" Margin="5" x:Name="cScale">
+                                <ComboBoxItem Content="S"/>
+                                <ComboBoxItem Content="M"/>
+                                <ComboBoxItem Content="L"/>
+                            </ComboBox>
+                        </WrapPanel>
+                    </Grid>
+                    <Grid DockPanel.Dock="Top">
+                        <WrapPanel>
+                            <Label Content="速さ" Width="70" Margin="5"/>
+                            <ComboBox Width="70" Margin="5" x:Name="cSpeed">
+                                <ComboBoxItem Content="速"/>
+                                <ComboBoxItem Content="中"/>
+                                <ComboBoxItem Content="遅"/>
+                            </ComboBox>
+                        </WrapPanel>
+                    </Grid>
+                </DockPanel>
+            </TabItem>
+            <!--            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem> -->
+        </TabControl>
+    </DockPanel>
+</Window>

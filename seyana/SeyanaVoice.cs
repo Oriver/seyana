@@ -21,7 +21,7 @@ namespace seyana
             sps = new Dictionary<situation, SoundPlayer>(lst.Count);
             foreach (var s in lst.Keys)
             {
-                sps.Add(s, new SoundPlayer(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("seyana." + lst[s])));
+                sps.Add(s, new SoundPlayer(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("seyana.se." + lst[s])));
                 sps[s].Load();
             }
         }

@@ -12,7 +12,7 @@
         ResizeMode="NoResize"
         ShowInTaskbar="False">
     <Grid>
-        <Image Source="fukidashi.png" RenderTransformOrigin="0.5, 0.5">
+        <Image Source="img/fukidashi.png" RenderTransformOrigin="0.5, 0.5">
             <Image.RenderTransform>
                 <ScaleTransform x:Name="invert"/>
             </Image.RenderTransform>
