@@ -8,8 +8,8 @@
 + 召喚したエビフライはドラッグアンドドロップで移動させられるぞ！
 + エビフライが大好きなｾﾔﾅｰは一目散にエビフライに寄って行って食べるぞ！
 
-# ■最新版バイナリ(v0.03)
-https://www.dropbox.com/s/vd1alpebag2esos/desktopseyana_v0.03.zip?dl=0
+# ■最新版バイナリ(v0.04)
+https://www.dropbox.com/s/sdkyqw97d9fm5xa/desktopseyana_v0.04.zip?dl=0
 
 
 # ■How to use
@@ -21,7 +21,7 @@ https://www.dropbox.com/s/vd1alpebag2esos/desktopseyana_v0.03.zip?dl=0
 # ■TODO
 + 「ｾﾔﾅｰ」以外のセリフの実装
 + 機能を増やす
-++ 時計機能が今のところ有力
+  + 時計機能が今のところ有力
 
 # ■素材
 + 背景透過ｾﾔﾅｰ：http://seiga.nicovideo.jp/seiga/im5943065

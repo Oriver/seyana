@@ -194,6 +194,7 @@ namespace seyana
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
+            brain.close();
             sw.Close();
             ebi.Close();
         }

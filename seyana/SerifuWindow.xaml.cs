@@ -20,9 +20,13 @@ namespace seyana
     public partial class SerifuWindow : Window
     {
         MainWindow mw;
+        public int w { private set; get; }
+        public int h { private set; get; }
         public SerifuWindow()
         {
             InitializeComponent();
+            w = (int)Width;
+            h = (int)Height;
         }
         public SerifuWindow(MainWindow mw): this()
         {

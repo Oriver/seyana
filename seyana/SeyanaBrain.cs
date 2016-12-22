@@ -28,7 +28,7 @@ namespace seyana
             moveTask = new Util.TaskManage(move);
         }
 
-        private const int FPS = 30;
+        public const int FPS = 30;
         public static double scale = 1;
 
         private Util.TaskManage thinkTask = null;
@@ -38,6 +38,7 @@ namespace seyana
         private SeyanaVoice voice = null;
         private SerifuWindow sw = null;
         private ebifry ebi = null;
+        private Clock clk = null;
 
         enum moveMode
         {
@@ -57,13 +58,18 @@ namespace seyana
             voice = new SeyanaVoice();
             this.sw = sw;
             this.ebi = ebi;
+            clk = new Clock();
+            clk.Show();
+
             nowMoveMode = moveMode.STAND;
-            moveTask.start();
-            thinkTask.start();
 
             queue = new Queue<qtask>();
 
             speed = 8;
+
+            moveSeyana(MainWindow.x, MainWindow.y);
+            moveTask.start();
+            thinkTask.start();
         }
 
         /// <summary>
@@ -72,7 +78,7 @@ namespace seyana
         private void run()
         {
             // ランダムウォークが発生する確率
-            double randomWalkThreshold = 0.03;
+            double randomWalkThreshold = 0.01;
 
             // エビフライを食べた後大人しくしている時間(秒)
             int manpukudo = 0;
@@ -82,7 +88,7 @@ namespace seyana
 
             while(true)
             {
-                if (thinkTask.cancellationRequest()) thinkTask.getToken().ThrowIfCancellationRequested();
+                if (thinkTask.cancellationRequest()) return;
 
                 // queue処理
                 #region queue
@@ -154,7 +160,8 @@ namespace seyana
         private void moveSeyana(int x, int y)
         {
             syn.setPositionInvoke(syn, x, y);
-            syn.setPositionInvoke(sw, x, y - 60);
+            syn.setPositionInvoke(sw, x + MainWindow.w / 2 - sw.w / 2, y +MainWindow.h / 4 - sw.h);
+            syn.setPositionInvoke(clk, x + MainWindow.w / 2 - clk.w / 2, y + MainWindow.h);
         }
         /// <summary>
         /// 移動ルーチン
@@ -250,6 +257,13 @@ namespace seyana
             }
         }
 
+        public void close()
+        {
+            thinkTask.cancel();
+            moveTask.cancel();
+            clk.end();
+        }
+
         public void clicked()
         {
             queue.Enqueue(qtask.JUMP);
@@ -270,6 +284,7 @@ namespace seyana
                 scale = cw.scale;
                 speed = cw.speed;
                 syn.setScale();
+                moveSeyana(MainWindow.x, MainWindow.y);
             }
 
             cw.Close();

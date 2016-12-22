@@ -20,3 +20,5 @@ c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\bin\Deb
 c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Debug\seyana_Content.g.cs
 c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Debug\ConfigWindow.g.cs
 c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Debug\ConfigWindow.baml
+C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Debug\Clock.g.cs
+C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Debug\Clock.baml

@@ -16,7 +16,8 @@ c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Rel
 c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Release\seyana.exe
 c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Release\seyana.pdb
 c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\bin\Release\HtmlAgilityPack.dll
-c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Release\seyana.csprojResolveAssemblyReference.cache
 c:\users\ryo-okugawa\documents\visual studio 2015\Projects\seyana\seyana\obj\Release\seyana_Content.g.cs
 C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Release\ConfigWindow.g.cs
 C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Release\ConfigWindow.baml
+C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Release\Clock.g.cs
+C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Release\Clock.baml
