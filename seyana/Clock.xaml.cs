@@ -43,7 +43,6 @@ namespace seyana
 
         public void end()
         {
-            Console.WriteLine("check");
             endFlg = true;
             Close();
         }

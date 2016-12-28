@@ -8,7 +8,10 @@
 + 召喚したエビフライはドラッグアンドドロップで移動させられるぞ！
 + エビフライが大好きなｾﾔﾅｰは一目散にエビフライに寄って行って食べるぞ！
 
-# ■最新版バイナリ(v0.04)
+# ■最新版バイナリ(v0.05)
+https://www.dropbox.com/s/bl59nwpb642fht4/desktopseyana_v0.05.zip?dl=0
+
+安定版(v0.04)
 https://www.dropbox.com/s/sdkyqw97d9fm5xa/desktopseyana_v0.04.zip?dl=0
 
 
