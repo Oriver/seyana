@@ -21,3 +21,4 @@ C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Rel
 C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Release\ConfigWindow.baml
 C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Release\Clock.g.cs
 C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Release\Clock.baml
+C:\Users\ryo-okugawa\Documents\Visual Studio 2015\Projects\seyana\seyana\obj\Release\seyana.csprojResolveAssemblyReference.cache

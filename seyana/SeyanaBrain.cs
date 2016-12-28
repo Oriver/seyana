@@ -42,7 +42,7 @@ namespace seyana
 
         enum moveMode
         {
-            STAND, EBI, RANDOMWALK, JUMP
+            STAND, EBI, RANDOMWALK, JUMP, ARABURI
         }
         private moveMode nowMoveMode;
 
@@ -123,9 +123,14 @@ namespace seyana
                 // 画面内にエビフライがあればそっちに向かう
                 if (ebi.live) {
                     manpukudo = ebisize * FPS;
-                    if (nowMoveMode != moveMode.EBI)
+                    if (nowMoveMode != moveMode.EBI && nowMoveMode != moveMode.ARABURI)
                     {
                         nowMoveMode = moveMode.EBI;
+                    }else
+                    {
+                        int dx = (MainWindow.x + MainWindow.w / 2) - (ebi.x + ebi.w / 2);
+                        int dy = (MainWindow.y + MainWindow.h / 2) - (ebi.y + ebi.h / 2);
+                        if (dx * dx + dy * dy < 75 * 75) ebi.eaten();
                     }
                 }
                 // ランダムウォーク判定
@@ -149,6 +154,7 @@ namespace seyana
         }
 
         private int toX, toY;
+        private int centX, centY;
         double move_t = 0;
         public double speed { private set; get; }
 
@@ -159,9 +165,13 @@ namespace seyana
         /// <param name="y"></param>
         private void moveSeyana(int x, int y)
         {
-            syn.setPositionInvoke(syn, x, y);
+            moveOnlySeyana(x, y);
             syn.setPositionInvoke(sw, x + MainWindow.w / 2 - sw.w / 2, y +MainWindow.h / 4 - sw.h);
             syn.setPositionInvoke(clk, x + MainWindow.w / 2 - clk.w / 2, y + MainWindow.h);
+        }
+        private void moveOnlySeyana(int x, int y)
+        {
+            syn.setPositionInvoke(syn, x, y);
         }
         /// <summary>
         /// 移動ルーチン
@@ -176,11 +186,12 @@ namespace seyana
             {
                 if (moveTask.cancellationRequest()) return;
 
-                switch(nowMoveMode)
+                switch (nowMoveMode)
                 {
                     case moveMode.STAND:
                         {
-                            System.Threading.Thread.Sleep(Util.rnd.Next(100, 500));
+                            //System.Threading.Thread.Sleep(Util.rnd.Next(100, 500));
+                            syn.faceToCursor();
                             break;
                         }
                     case moveMode.EBI:
@@ -200,16 +211,10 @@ namespace seyana
                                 moveSeyana(x, y);
                             }else
                             {
-                                dst = Util.rnd.NextDouble() * 60;
-                                double dir = Util.rnd.NextDouble() * 2 * Math.PI;
-                                x = (int)((ebi.x + ebi.w / 2) + dst * Math.Cos(dir) - MainWindow.w / 2);
-                                y = (int)((ebi.y + ebi.h / 2) + dst * Math.Sin(dir) - MainWindow.h / 2);
-
-                                moveSeyana(x, y);
-                                ebi.eaten();
+                                centX = ebi.x + ebi.w / 2;
+                                centY = ebi.y + ebi.h / 2;
+                                nowMoveMode = moveMode.ARABURI;
                             }
-
-                            if (!ebi.live) nowMoveMode = moveMode.STAND;
 
                             break;
                         }
@@ -250,7 +255,26 @@ namespace seyana
                             else moveSeyana(x, y);
                             break;
                         }
-                }
+                    case moveMode.ARABURI:
+                        {
+                            if (!(centX == ebi.x + ebi.w / 2 && centY == ebi.y + ebi.h / 2))
+                            {
+                                nowMoveMode = moveMode.EBI;
+                                break;
+                            }
+                            double dst = Util.rnd.NextDouble() * 60;
+                            double dir = Util.rnd.NextDouble() * 2 * Math.PI;
+                            x = (int)(centX + dst * Math.Cos(dir) - MainWindow.w / 2);
+                            y = (int)(centY + dst * Math.Sin(dir) - MainWindow.h / 2);
+
+                            moveOnlySeyana(x, y);
+
+                            if (!ebi.live) nowMoveMode = moveMode.STAND;
+
+                            break;
+                        } 
+                    default: break;
+                } 
 
                 move_t++;
                 System.Threading.Thread.Sleep((int)(1000 / FPS / (nowMoveMode ==moveMode.EBI ? 1.7 : 1.0)));

@@ -147,8 +147,26 @@ namespace seyana
             
         }
 
+        public static bool looking = false;
         public void faceLeft() { Dispatcher.Invoke(() => invert.ScaleX = Math.Abs(invert.ScaleX)); }
         public void faceRight() { Dispatcher.Invoke(() => invert.ScaleX = -Math.Abs(invert.ScaleX)); }
+        public void faceToCursor()
+        {
+            if(!looking)
+            {
+                looking = true;
+                Dispatcher.Invoke(() =>
+                {
+                    var p = System.Windows.Forms.Cursor.Position;
+                    var wp = new Point(p.X, p.Y);
+                    var src = PresentationSource.FromVisual(this);
+                    var mp = src.CompositionTarget.TransformFromDevice.Transform(wp);
+                    if (mp.X < x) faceLeft();
+                    else faceRight();
+                    looking = false;
+                });
+            }
+        }
 
         /// <summary>
         /// action something(to test)
@@ -182,6 +200,7 @@ namespace seyana
         /// <param name="args"></param>
         private void Quit_Clicked(object sender, RoutedEventArgs args)
         {
+            brain.close();
             Close();
         }
 
@@ -194,7 +213,6 @@ namespace seyana
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            brain.close();
             sw.Close();
             ebi.Close();
         }
