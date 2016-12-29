@@ -8,11 +8,11 @@
 + 召喚したエビフライはドラッグアンドドロップで移動させられるぞ！
 + エビフライが大好きなｾﾔﾅｰは一目散にエビフライに寄って行って食べるぞ！
 
-# ■最新版バイナリ(v0.05)
-http://priver.sakura.ne.jp/seyana/upload.cgi?get=00002
+# ■最新版バイナリ(v0.06)
+http://priver.sakura.ne.jp/seyana/upload.cgi?get=00003
 
-安定版(v0.04)
-http://priver.sakura.ne.jp/seyana/upload.cgi?get=00001
++安定版(v0.04)
+  +http://priver.sakura.ne.jp/seyana/upload.cgi?get=00001
 
 # ■How to use
 + .net framework 4.6の最新版を以下のURLから落としてインストールします
