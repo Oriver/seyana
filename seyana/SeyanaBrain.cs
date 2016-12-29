@@ -30,6 +30,8 @@ namespace seyana
 
         public const int FPS = 30;
         public static double scale = 1;
+        // ランダムウォークが発生する確率
+        public static double randomWalkThreshold = 0.02;
 
         private Util.TaskManage thinkTask = null;
         private Util.TaskManage moveTask = null;
@@ -77,9 +79,6 @@ namespace seyana
         /// </summary>
         private void run()
         {
-            // ランダムウォークが発生する確率
-            double randomWalkThreshold = 0.01;
-
             // エビフライを食べた後大人しくしている時間(秒)
             int manpukudo = 0;
             int ebisize = 12;
@@ -184,6 +183,7 @@ namespace seyana
             
             while(true)
             {
+                Console.WriteLine("check");
                 if (moveTask.cancellationRequest()) return;
 
                 switch (nowMoveMode)
@@ -192,6 +192,7 @@ namespace seyana
                         {
                             //System.Threading.Thread.Sleep(Util.rnd.Next(100, 500));
                             syn.faceToCursor();
+                            moveSeyana(MainWindow.x, MainWindow.y);
                             break;
                         }
                     case moveMode.EBI:
@@ -216,6 +217,7 @@ namespace seyana
                                 nowMoveMode = moveMode.ARABURI;
                             }
 
+                            sw.hide();
                             break;
                         }
                     case moveMode.RANDOMWALK:
@@ -237,6 +239,7 @@ namespace seyana
                             }
                             else nowMoveMode = moveMode.STAND;
 
+                            sw.hide();
                             break;
                         }
                     case moveMode.JUMP:
@@ -252,7 +255,7 @@ namespace seyana
                             y += (int)dy;
 
                             if (g * move_t > 2 * v0) nowMoveMode = moveMode.STAND;
-                            else moveSeyana(x, y);
+                            else moveOnlySeyana(x, y);
                             break;
                         }
                     case moveMode.ARABURI:
@@ -271,6 +274,7 @@ namespace seyana
 
                             if (!ebi.live) nowMoveMode = moveMode.STAND;
 
+                            sw.hide();
                             break;
                         } 
                     default: break;
@@ -299,7 +303,7 @@ namespace seyana
         public void openConfig()
         {
             var cw = new ConfigWindow(this);
-            cw.Show();
+            cw.ShowDialog();
         }
         public void closeConfig(ConfigWindow.ConfigEvent ce, ConfigWindow cw)
         {
@@ -307,6 +311,7 @@ namespace seyana
             {
                 scale = cw.scale;
                 speed = cw.speed;
+                randomWalkThreshold = cw.randomWalkThreashold;
                 syn.setScale();
                 moveSeyana(MainWindow.x, MainWindow.y);
             }

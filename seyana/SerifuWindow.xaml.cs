@@ -37,6 +37,10 @@ namespace seyana
         {
             Dispatcher.Invoke(() => this.serifu.Text = message);
         }
+        public void hide()
+        {
+            if(IsVisible) Dispatcher.Invoke(() => Hide());
+        }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {

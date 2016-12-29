@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:seyana"
         mc:Ignorable="d"
+        Topmost="True"
         Title="Config" Height="360" Width="480">
     <DockPanel>
         <Grid DockPanel.Dock="Bottom">
@@ -33,6 +34,17 @@
                                 <ComboBoxItem Content="速"/>
                                 <ComboBoxItem Content="中"/>
                                 <ComboBoxItem Content="遅"/>
+                            </ComboBox>
+                        </WrapPanel>
+                    </Grid>
+                    <Grid DockPanel.Dock="Top">
+                        <WrapPanel>
+                            <Label Content="落ち着き" Width="70" Margin="5"/>
+                            <ComboBox Width="70" Margin="5" x:Name="cRWT">
+                                <ComboBoxItem Content="静止"/>
+                                <ComboBoxItem Content="そんなに"/>
+                                <ComboBoxItem Content="ほどほど"/>
+                                <ComboBoxItem Content="ふらふら"/>
                             </ComboBox>
                         </WrapPanel>
                     </Grid>

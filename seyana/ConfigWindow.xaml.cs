@@ -29,19 +29,23 @@ namespace seyana
             this.brain = brain;
             for (int i = 0; i < scaleList.Count; ++i) if (SeyanaBrain.scale == scaleList[i]) cScale.SelectedIndex = i;
             for (int i = 0; i < speedList.Count; ++i) if (brain.speed == speedList[i]) cSpeed.SelectedIndex = i;
+            for (int i = 0; i < rwtList.Count; ++i) if (SeyanaBrain.randomWalkThreshold == rwtList[i]) cRWT.SelectedIndex = i;
         }
 
         public enum ConfigEvent { OKEVENT, CANCELEVENT }
         private List<double> scaleList = new List<double> { 0.35, 0.7, 1 };
         private List<double> speedList = new List<double> { 20, 8, 4 };
+        private List<double> rwtList = new List<double> { 0, 0.005, 0.02, 0.1 };
 
         public double scale { private set; get; }
         public double speed { private set; get; }
+        public double randomWalkThreashold { private set; get; }
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {
             if (cScale.SelectedIndex >= 0 && cScale.SelectedIndex < scaleList.Count) scale = scaleList[cScale.SelectedIndex];
             if (cSpeed.SelectedIndex >= 0 && cSpeed.SelectedIndex < speedList.Count) speed = speedList[cSpeed.SelectedIndex];
+            if (cRWT.SelectedIndex >= 0 && cRWT.SelectedIndex < rwtList.Count) randomWalkThreashold = rwtList[cRWT.SelectedIndex];
             brain.closeConfig(ConfigEvent.OKEVENT, this);
             Close();
         }

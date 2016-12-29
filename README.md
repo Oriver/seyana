@@ -9,11 +9,10 @@
 + エビフライが大好きなｾﾔﾅｰは一目散にエビフライに寄って行って食べるぞ！
 
 # ■最新版バイナリ(v0.05)
-https://www.dropbox.com/s/bl59nwpb642fht4/desktopseyana_v0.05.zip?dl=0
+http://priver.sakura.ne.jp/seyana/upload.cgi?get=00002
 
 安定版(v0.04)
-https://www.dropbox.com/s/sdkyqw97d9fm5xa/desktopseyana_v0.04.zip?dl=0
-
+http://priver.sakura.ne.jp/seyana/upload.cgi?get=00001
 
 # ■How to use
 + .net framework 4.6の最新版を以下のURLから落としてインストールします

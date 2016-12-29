@@ -75,6 +75,7 @@ namespace seyana
             setPosition();
         }
 
+        private static bool moving = false;
         private void setPosition()
         {
             setPosition(this, x, y);
@@ -102,7 +103,14 @@ namespace seyana
         }
         public void setPositionInvoke(UIElement e, int x, int y)
         {
-            Dispatcher.Invoke(() => setPosition(e, x, y));
+            if (!moving)
+            {
+                moving = true;
+                Dispatcher.Invoke(() => {
+                    setPosition(e, x, y);
+                    moving = false;
+                });
+            }
         }
 
         /// <summary>
@@ -148,8 +156,23 @@ namespace seyana
         }
 
         public static bool looking = false;
-        public void faceLeft() { Dispatcher.Invoke(() => invert.ScaleX = Math.Abs(invert.ScaleX)); }
-        public void faceRight() { Dispatcher.Invoke(() => invert.ScaleX = -Math.Abs(invert.ScaleX)); }
+        public static int faceTo = 1; // 1 = left, -1 = right
+        public void faceLeft()
+        {
+            if (faceTo == -1)
+            {
+                Dispatcher.Invoke(() => invert.ScaleX = Math.Abs(invert.ScaleX));
+                faceTo = 1;
+            }
+        }
+        public void faceRight()
+        {
+            if (faceTo == 1)
+            {
+                Dispatcher.Invoke(() => invert.ScaleX = -Math.Abs(invert.ScaleX));
+                faceTo = -1;
+            }
+        }
         public void faceToCursor()
         {
             if(!looking)
