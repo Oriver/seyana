@@ -20,11 +20,25 @@ namespace seyana
     public partial class Clock : Window
     {
         public int w { private set; get; }
+        private SeyanaBrain brain;
         public Clock()
         {
             InitializeComponent();
             w = (int)Width;
             Task.Factory.StartNew(run);
+            brain = SeyanaBrain.SeyanaBrainFactory;
+        }
+
+        private enum context { CLOCK, TIMER};
+        private context nowContext = context.CLOCK;
+
+        private DateTime endTime;
+
+        public void setTimer(int h, int m, int s)
+        {
+            var now = DateTime.Now;
+            endTime = now.AddHours(h).AddMinutes(m).AddSeconds(s);
+            nowContext = context.TIMER;
         }
 
         private bool endFlg = false;
@@ -35,7 +49,29 @@ namespace seyana
                 if (endFlg) return;
 
                 var dt = DateTime.Now;
-                Dispatcher.Invoke(() => l.Content = dt.ToString("HH:mm"));
+                switch (nowContext)
+                {
+                    case context.CLOCK:
+                        {
+                            Dispatcher.Invoke(() => l.Content = dt.ToString("HH:mm"));
+                            break;
+                        }
+                    case context.TIMER:
+                        {
+                            var last = endTime - dt;
+                            if (last.TotalMilliseconds < 0)
+                            {
+                                brain.endTimer();
+                                nowContext = context.CLOCK;
+                            }
+                            else {
+                                Dispatcher.Invoke(() => l.Content = last.ToString(@"hh\:mm\:ss"));
+                            }
+                            break;
+                        }
+                    default:
+                        break;
+                }
 
                 System.Threading.Thread.Sleep(1000 / SeyanaBrain.FPS);
             }

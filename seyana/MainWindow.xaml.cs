@@ -120,7 +120,7 @@ namespace seyana
         public void say(string message)
         {
             sw.say(message);
-            sw.Show();
+            Dispatcher.Invoke(() => sw.Show());
         }
 
         /// <summary>
@@ -209,6 +209,11 @@ namespace seyana
         private void Summon_Clicked(object sender, RoutedEventArgs args)
         {
             createEbi();
+        }
+
+        private void Timer_Clicked(object sender, RoutedEventArgs args)
+        {
+            brain.setTimer(0, 0, 10);
         }
 
         private void Config_Clicked(object sender, RoutedEventArgs args)

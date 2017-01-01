@@ -183,7 +183,6 @@ namespace seyana
             
             while(true)
             {
-                Console.WriteLine("check");
                 if (moveTask.cancellationRequest()) return;
 
                 switch (nowMoveMode)
@@ -285,6 +284,10 @@ namespace seyana
             }
         }
 
+        /// <summary>
+        /// 終了時の処理
+        /// syn -> brain
+        /// </summary>
         public void close()
         {
             thinkTask.cancel();
@@ -292,6 +295,10 @@ namespace seyana
             clk.end();
         }
 
+        /// <summary>
+        /// セヤナーがクリックされたときの処理
+        /// syn -> brain
+        /// </summary>
         public void clicked()
         {
             queue.Enqueue(qtask.JUMP);
@@ -300,11 +307,42 @@ namespace seyana
             voice.playSeyana();
         }
 
+        /// <summary>
+        /// タイマーをセットするやで
+        /// brain -> clock
+        /// </summary>
+        /// <param name="h">時間</param>
+        /// <param name="m">分</param>
+        /// <param name="s">秒</param>
+        public void setTimer(int h, int m, int s)
+        {
+            clk.setTimer(h, m, s);
+        }
+        /// <summary>
+        /// タイマー終了時の処理
+        /// clock -> brain
+        /// </summary>
+        public void endTimer()
+        {
+            syn.say("ｾﾔﾅｰ");
+            voice.playSeyana();
+            nowMoveMode = moveMode.ARABURI;
+        }
+
+        /// <summary>
+        /// コンフィグウィンドウを開く命令
+        /// syn -> brain
+        /// </summary>
         public void openConfig()
         {
             var cw = new ConfigWindow(this);
             cw.ShowDialog();
         }
+        /// <summary>
+        /// コンフィグウィンドウが閉じられたときの処理
+        /// </summary>
+        /// <param name="ce">OKが押されたのかキャンセルされたのか</param>
+        /// <param name="cw">コンフィグ内容</param>
         public void closeConfig(ConfigWindow.ConfigEvent ce, ConfigWindow cw)
         {
             if(ce == ConfigWindow.ConfigEvent.OKEVENT)
