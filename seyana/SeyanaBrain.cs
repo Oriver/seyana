@@ -50,7 +50,7 @@ namespace seyana
 
         enum qtask
         {
-            JUMP
+            JUMP, EBI_ARABURI, TIMER_ARABURI
         }
         private Queue<qtask> queue;
 
@@ -114,30 +114,46 @@ namespace seyana
                                 }
                                 break;
                             }
+                        case qtask.EBI_ARABURI:
+                            // エビを食べている
+                            nowMoveMode = moveMode.ARABURI;
+                            if (ebi.live)
+                            {
+                                manpukudo = ebisize * FPS;
+
+                                int dx = (MainWindow.x + MainWindow.w / 2) - (ebi.x + ebi.w / 2);
+                                int dy = (MainWindow.y + MainWindow.h / 2) - (ebi.y + ebi.h / 2);
+                                if (dx * dx + dy * dy < 75 * 75) ebi.eaten();
+                            }else
+                            {
+                                nowMoveMode = moveMode.STAND;
+                                queue.Dequeue();
+                            }
+
+                            break;
+                        case qtask.TIMER_ARABURI:
+                            // タイマー終了通知
+                            nowMoveMode = moveMode.ARABURI;
+                            break;
                     }
                 }
                 #endregion
-
-                // エビフライ判定
-                // 画面内にエビフライがあればそっちに向かう
-                if (ebi.live) {
-                    manpukudo = ebisize * FPS;
-                    if (nowMoveMode != moveMode.EBI && nowMoveMode != moveMode.ARABURI)
+                else // queueが空の処理
+                {
+                    // エビフライ判定
+                    // 画面内にエビフライがあればそっちに向かう
+                    if (ebi.live)
                     {
                         nowMoveMode = moveMode.EBI;
-                    }else
+                    }
+                    // ランダムウォーク判定
+                    // 移動中でないかつランダムウォーク判定に成功するとランダムウォークが起こる
+                    else if (nowMoveMode == moveMode.STAND && Util.rnd.NextDouble() < randomWalkThreshold && manpukudo <= 0)
                     {
-                        int dx = (MainWindow.x + MainWindow.w / 2) - (ebi.x + ebi.w / 2);
-                        int dy = (MainWindow.y + MainWindow.h / 2) - (ebi.y + ebi.h / 2);
-                        if (dx * dx + dy * dy < 75 * 75) ebi.eaten();
+                        randomWalk();
                     }
                 }
-                // ランダムウォーク判定
-                // 移動中でないかつランダムウォーク判定に成功するとランダムウォークが起こる
-                else if (nowMoveMode == moveMode.STAND && Util.rnd.NextDouble() < randomWalkThreshold && manpukudo <= 0)
-                {
-                    randomWalk();
-                }
+
 
                 if (manpukudo > 0) manpukudo--;
 
@@ -213,7 +229,7 @@ namespace seyana
                             {
                                 centX = ebi.x + ebi.w / 2;
                                 centY = ebi.y + ebi.h / 2;
-                                nowMoveMode = moveMode.ARABURI;
+                                queue.Enqueue(qtask.EBI_ARABURI);
                             }
 
                             sw.hide();
@@ -259,9 +275,11 @@ namespace seyana
                         }
                     case moveMode.ARABURI:
                         {
-                            if (!(centX == ebi.x + ebi.w / 2 && centY == ebi.y + ebi.h / 2))
+                            if (!(centX == ebi.x + ebi.w / 2 && centY == ebi.y + ebi.h / 2) && queue.Peek() == qtask.EBI_ARABURI)
                             {
+                                Console.WriteLine("move");
                                 nowMoveMode = moveMode.EBI;
+                                queue.Dequeue();
                                 break;
                             }
                             double dst = Util.rnd.NextDouble() * 60;
@@ -270,8 +288,6 @@ namespace seyana
                             y = (int)(centY + dst * Math.Sin(dir) - MainWindow.h / 2);
 
                             moveOnlySeyana(x, y);
-
-                            if (!ebi.live) nowMoveMode = moveMode.STAND;
 
                             sw.hide();
                             break;
@@ -301,10 +317,13 @@ namespace seyana
         /// </summary>
         public void clicked()
         {
-            queue.Enqueue(qtask.JUMP);
-            queue.Enqueue(qtask.JUMP);
-            syn.say("ｾﾔﾅｰ");
-            voice.playSeyana();
+            if (nowMoveMode != moveMode.ARABURI)
+            {
+                queue.Enqueue(qtask.JUMP);
+                queue.Enqueue(qtask.JUMP);
+                syn.say("ｾﾔﾅｰ");
+                voice.playSeyana();
+            }
         }
 
         /// <summary>
@@ -324,9 +343,14 @@ namespace seyana
         /// </summary>
         public void endTimer()
         {
-            syn.say("ｾﾔﾅｰ");
             voice.playSeyana();
-            nowMoveMode = moveMode.ARABURI;
+            centX = MainWindow.x + MainWindow.w / 2;
+            centY = MainWindow.y + MainWindow.h / 2;
+            queue.Enqueue(qtask.TIMER_ARABURI);
+        }
+        public void timerClicked()
+        {
+            if (queue.Count > 0 && queue.Peek() == qtask.TIMER_ARABURI) queue.Dequeue();
         }
 
         /// <summary>

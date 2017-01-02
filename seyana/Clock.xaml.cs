@@ -33,12 +33,14 @@ namespace seyana
         private context nowContext = context.CLOCK;
 
         private DateTime endTime;
+        private bool isTimer;
 
         public void setTimer(int h, int m, int s)
         {
             var now = DateTime.Now;
             endTime = now.AddHours(h).AddMinutes(m).AddSeconds(s);
             nowContext = context.TIMER;
+            isTimer = true;
         }
 
         private bool endFlg = false;
@@ -49,6 +51,13 @@ namespace seyana
                 if (endFlg) return;
 
                 var dt = DateTime.Now;
+                var last = endTime - dt;
+                if (last.TotalSeconds < 0 && isTimer)
+                {
+                    brain.endTimer();
+                    isTimer = false;
+                }
+
                 switch (nowContext)
                 {
                     case context.CLOCK:
@@ -58,7 +67,6 @@ namespace seyana
                         }
                     case context.TIMER:
                         {
-                            var last = endTime - dt;
                             if (last.TotalMilliseconds < 0)
                             {
                                 brain.endTimer();
@@ -74,6 +82,20 @@ namespace seyana
                 }
 
                 System.Threading.Thread.Sleep(1000 / SeyanaBrain.FPS);
+            }
+        }
+
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+            var last = endTime - DateTime.Now;
+            if(last.TotalSeconds > 0)
+            {
+                if (nowContext == context.CLOCK) nowContext = context.TIMER;
+                else nowContext = context.CLOCK;
+            }else
+            {
+                brain.timerClicked();
             }
         }
 
