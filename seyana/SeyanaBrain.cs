@@ -57,7 +57,7 @@ namespace seyana
         public void init(MainWindow mw, SerifuWindow sw, ebifry ebi)
         {
             syn = mw;
-            voice = new SeyanaVoice();
+            voice = SeyanaVoice.SeyanaVoiceFactory;
             this.sw = sw;
             this.ebi = ebi;
             clk = new Clock();
@@ -85,80 +85,83 @@ namespace seyana
 
             thinkTask.getToken().ThrowIfCancellationRequested();
 
-            while(true)
-            {
-                if (thinkTask.cancellationRequest()) return;
-
-                // queue処理
-                #region queue
-                if (queue.Count != 0)
+            try {
+                while (true)
                 {
-                    var top = queue.Peek();
-                    switch (top)
+                    if (thinkTask.cancellationRequest()) thinkTask.getToken().ThrowIfCancellationRequested();
+
+                    // queue処理
+                    #region queue
+                    if (queue.Count != 0)
                     {
-                        case qtask.JUMP:
-                            {
-                                switch(nowMoveMode)
+                        var top = queue.Peek();
+                        switch (top)
+                        {
+                            case qtask.JUMP:
                                 {
-                                    case moveMode.JUMP:
-                                        {
-                                            break;
-                                        }
-                                    default:
-                                        {
-                                            queue.Dequeue();
-                                            nowMoveMode = moveMode.JUMP;
-                                            move_t = 0;
-                                            break;
-                                        }
+                                    switch (nowMoveMode)
+                                    {
+                                        case moveMode.JUMP:
+                                            {
+                                                break;
+                                            }
+                                        default:
+                                            {
+                                                queue.Dequeue();
+                                                nowMoveMode = moveMode.JUMP;
+                                                move_t = 0;
+                                                break;
+                                            }
+                                    }
+                                    break;
                                 }
+                            case qtask.EBI_ARABURI:
+                                // エビを食べている
+                                nowMoveMode = moveMode.ARABURI;
+                                if (ebi.live)
+                                {
+                                    manpukudo = ebisize * FPS;
+
+                                    int dx = (MainWindow.x + MainWindow.w / 2) - (ebi.x + ebi.w / 2);
+                                    int dy = (MainWindow.y + MainWindow.h / 2) - (ebi.y + ebi.h / 2);
+                                    if (dx * dx + dy * dy < 75 * 75) ebi.eaten();
+                                } else
+                                {
+                                    nowMoveMode = moveMode.STAND;
+                                    queue.Dequeue();
+                                }
+
                                 break;
-                            }
-                        case qtask.EBI_ARABURI:
-                            // エビを食べている
-                            nowMoveMode = moveMode.ARABURI;
-                            if (ebi.live)
-                            {
-                                manpukudo = ebisize * FPS;
-
-                                int dx = (MainWindow.x + MainWindow.w / 2) - (ebi.x + ebi.w / 2);
-                                int dy = (MainWindow.y + MainWindow.h / 2) - (ebi.y + ebi.h / 2);
-                                if (dx * dx + dy * dy < 75 * 75) ebi.eaten();
-                            }else
-                            {
-                                nowMoveMode = moveMode.STAND;
-                                queue.Dequeue();
-                            }
-
-                            break;
-                        case qtask.TIMER_ARABURI:
-                            // タイマー終了通知
-                            nowMoveMode = moveMode.ARABURI;
-                            break;
+                            case qtask.TIMER_ARABURI:
+                                // タイマー終了通知
+                                nowMoveMode = moveMode.ARABURI;
+                                voice.playSeyana();
+                                break;
+                        }
                     }
-                }
-                #endregion
-                else // queueが空の処理
-                {
-                    // エビフライ判定
-                    // 画面内にエビフライがあればそっちに向かう
-                    if (ebi.live)
+                    #endregion
+                    else // queueが空の処理
                     {
-                        nowMoveMode = moveMode.EBI;
+                        // エビフライ判定
+                        // 画面内にエビフライがあればそっちに向かう
+                        if (ebi.live)
+                        {
+                            nowMoveMode = moveMode.EBI;
+                        }
+                        // ランダムウォーク判定
+                        // 移動中でないかつランダムウォーク判定に成功するとランダムウォークが起こる
+                        else if (nowMoveMode == moveMode.STAND && Util.rnd.NextDouble() < randomWalkThreshold && manpukudo <= 0)
+                        {
+                            randomWalk();
+                        }
                     }
-                    // ランダムウォーク判定
-                    // 移動中でないかつランダムウォーク判定に成功するとランダムウォークが起こる
-                    else if (nowMoveMode == moveMode.STAND && Util.rnd.NextDouble() < randomWalkThreshold && manpukudo <= 0)
-                    {
-                        randomWalk();
-                    }
+
+
+                    if (manpukudo > 0) manpukudo--;
+
+                    System.Threading.Thread.Sleep(1000 / FPS);
                 }
-
-
-                if (manpukudo > 0) manpukudo--;
-
-                System.Threading.Thread.Sleep(1000 / FPS);
-            }
+            }catch(OperationCanceledException) { }
         }
 
         private void randomWalk()
@@ -196,108 +199,114 @@ namespace seyana
             moveTask.getToken().ThrowIfCancellationRequested();
             int x = MainWindow.x;
             int y = MainWindow.y;
-            
-            while(true)
-            {
-                if (moveTask.cancellationRequest()) return;
 
-                switch (nowMoveMode)
+            try {
+                while (true)
                 {
-                    case moveMode.STAND:
-                        {
-                            //System.Threading.Thread.Sleep(Util.rnd.Next(100, 500));
-                            syn.faceToCursor();
-                            moveSeyana(MainWindow.x, MainWindow.y);
-                            break;
-                        }
-                    case moveMode.EBI:
-                        {
-                            int dx = (ebi.x + ebi.w / 2) - (x + MainWindow.w / 2);
-                            int dy = (ebi.y + ebi.h / 2) - (y + MainWindow.h / 2);
-                            double dst = Math.Sqrt(dx * dx + dy * dy);
-                            if (dst > 70)
+                    if (moveTask.cancellationRequest()) moveTask.getToken().ThrowIfCancellationRequested();
+
+                    switch (nowMoveMode)
+                    {
+                        case moveMode.STAND:
                             {
-                                double dir = Math.Atan2(dy, dx);
-                                x = (int)(x + speed * Math.Cos(dir));
-                                y = (int)(y + speed * Math.Sin(dir));
-
-                                if (Math.Cos(dir) > 0) syn.faceRight();
-                                else syn.faceLeft();
-
-                                moveSeyana(x, y);
-                            }else
-                            {
-                                centX = ebi.x + ebi.w / 2;
-                                centY = ebi.y + ebi.h / 2;
-                                queue.Enqueue(qtask.EBI_ARABURI);
-                            }
-
-                            sw.hide();
-                            break;
-                        }
-                    case moveMode.RANDOMWALK:
-                        {
-                            double dx = toX - x;
-                            double dy = toY - y;
-                            double dir = Math.Atan2(dy, dx);
-                            double dst = Math.Sqrt(dx * dx + dy * dy);
-
-                            if (dst > 10)
-                            {
-                                x += (int)(speed * Math.Cos(dir));
-                                y += (int)(speed * Math.Sin(dir));
-
-                                if (Math.Cos(dir) > 0) syn.faceRight();
-                                else syn.faceLeft();
-
-                                moveSeyana(x, y);
-                            }
-                            else nowMoveMode = moveMode.STAND;
-
-                            sw.hide();
-                            break;
-                        }
-                    case moveMode.JUMP:
-                        {
-                            // 重力加速度，ジャンプ力
-                            double g = 1.2;
-                            double v0 = 20;
-
-                            double dx = 0;
-                            double dy = - v0 + g * move_t;
-
-                            x += (int)dx;
-                            y += (int)dy;
-
-                            if (g * move_t > 2 * v0) nowMoveMode = moveMode.STAND;
-                            else moveOnlySeyana(x, y);
-                            break;
-                        }
-                    case moveMode.ARABURI:
-                        {
-                            if (!(centX == ebi.x + ebi.w / 2 && centY == ebi.y + ebi.h / 2) && queue.Peek() == qtask.EBI_ARABURI)
-                            {
-                                Console.WriteLine("move");
-                                nowMoveMode = moveMode.EBI;
-                                queue.Dequeue();
+                                //System.Threading.Thread.Sleep(Util.rnd.Next(100, 500));
+                                syn.faceToCursor();
+                                moveSeyana(MainWindow.x, MainWindow.y);
                                 break;
                             }
-                            double dst = Util.rnd.NextDouble() * 60;
-                            double dir = Util.rnd.NextDouble() * 2 * Math.PI;
-                            x = (int)(centX + dst * Math.Cos(dir) - MainWindow.w / 2);
-                            y = (int)(centY + dst * Math.Sin(dir) - MainWindow.h / 2);
+                        case moveMode.EBI:
+                            {
+                                int dx = (ebi.x + ebi.w / 2) - (x + MainWindow.w / 2);
+                                int dy = (ebi.y + ebi.h / 2) - (y + MainWindow.h / 2);
+                                double dst = Math.Sqrt(dx * dx + dy * dy);
+                                if (dst > 70)
+                                {
+                                    double dir = Math.Atan2(dy, dx);
+                                    x = (int)(x + speed * Math.Cos(dir));
+                                    y = (int)(y + speed * Math.Sin(dir));
 
-                            moveOnlySeyana(x, y);
+                                    if (Math.Cos(dir) > 0) syn.faceRight();
+                                    else syn.faceLeft();
 
-                            sw.hide();
-                            break;
-                        } 
-                    default: break;
-                } 
+                                    moveSeyana(x, y);
+                                } else
+                                {
+                                    centX = ebi.x + ebi.w / 2;
+                                    centY = ebi.y + ebi.h / 2;
+                                    queue.Enqueue(qtask.EBI_ARABURI);
+                                }
 
-                move_t++;
-                System.Threading.Thread.Sleep((int)(1000 / FPS / (nowMoveMode ==moveMode.EBI ? 1.7 : 1.0)));
-            }
+                                sw.hide();
+                                break;
+                            }
+                        case moveMode.RANDOMWALK:
+                            {
+                                double dx = toX - x;
+                                double dy = toY - y;
+                                double dir = Math.Atan2(dy, dx);
+                                double dst = Math.Sqrt(dx * dx + dy * dy);
+
+                                if (dst > 10)
+                                {
+                                    x += (int)(speed * Math.Cos(dir));
+                                    y += (int)(speed * Math.Sin(dir));
+
+                                    if (Math.Cos(dir) > 0) syn.faceRight();
+                                    else syn.faceLeft();
+
+                                    moveSeyana(x, y);
+                                }
+                                else nowMoveMode = moveMode.STAND;
+
+                                sw.hide();
+                                break;
+                            }
+                        case moveMode.JUMP:
+                            {
+                                // 重力加速度，ジャンプ力
+                                double g = 1.2;
+                                double v0 = 20;
+
+                                double dx = 0;
+                                double dy = -v0 + g * move_t;
+
+                                x += (int)dx;
+                                y += (int)dy;
+
+                                if (g * move_t > 2 * v0) nowMoveMode = moveMode.STAND;
+                                else moveOnlySeyana(x, y);
+                                break;
+                            }
+                        case moveMode.ARABURI:
+                            {
+                                if (queue.Count == 0 || !(queue.Peek() == qtask.EBI_ARABURI || queue.Peek() == qtask.TIMER_ARABURI))
+                                {
+                                    nowMoveMode = moveMode.STAND;
+                                }
+                                if (!(centX == ebi.x + ebi.w / 2 && centY == ebi.y + ebi.h / 2) && (queue.Count > 0 && queue.Peek() == qtask.EBI_ARABURI))
+                                {
+                                    Console.WriteLine("move");
+                                    nowMoveMode = moveMode.EBI;
+                                    queue.Dequeue();
+                                    break;
+                                }
+                                double dst = Util.rnd.NextDouble() * 60;
+                                double dir = Util.rnd.NextDouble() * 2 * Math.PI;
+                                x = (int)(centX + dst * Math.Cos(dir) - MainWindow.w / 2);
+                                y = (int)(centY + dst * Math.Sin(dir) - MainWindow.h / 2);
+
+                                moveOnlySeyana(x, y);
+
+                                sw.hide();
+                                break;
+                            }
+                        default: break;
+                    }
+
+                    move_t++;
+                    System.Threading.Thread.Sleep((int)(1000 / FPS / (nowMoveMode == moveMode.EBI ? 1.7 : 1.0)));
+                }
+            }catch(OperationCanceledException) { }
         }
 
         /// <summary>
@@ -343,13 +352,13 @@ namespace seyana
         /// </summary>
         public void endTimer()
         {
-            voice.playSeyana();
             centX = MainWindow.x + MainWindow.w / 2;
             centY = MainWindow.y + MainWindow.h / 2;
             queue.Enqueue(qtask.TIMER_ARABURI);
         }
         public void timerClicked()
         {
+            if (queue == null) return;
             if (queue.Count > 0 && queue.Peek() == qtask.TIMER_ARABURI) queue.Dequeue();
         }
 

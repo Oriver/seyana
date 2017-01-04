@@ -11,7 +11,17 @@
         ResizeMode="NoResize"
         Topmost="True"
         Title="Clock" Height="50" Width="120">
+
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="timer" Click="Timer_Click"/>
+        </ContextMenu>
+    </Window.ContextMenu>
     <Grid Background="#C0202020">
         <Label x:Name="l" Content="12:34" FontSize="28" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FFFFCFDF"/>
+        <TextBox x:Name="tbox" Text="3:00" Margin="3" FontSize="28" Visibility="Hidden"
+                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 KeyDown="keyDown"/>
     </Grid>
 </Window>

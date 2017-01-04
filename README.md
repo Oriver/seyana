@@ -7,12 +7,14 @@
 + エビフライを召喚しよう！
 + 召喚したエビフライはドラッグアンドドロップで移動させられるぞ！
 + エビフライが大好きなｾﾔﾅｰは一目散にエビフライに寄って行って食べるぞ！
++ 時計を右クリックするとタイマーが設定できるぞ
+  + 指定した時間の後にｾﾔﾅｰが通知してくれるぞ
 
-# ■最新版バイナリ(v0.06)
-http://priver.sakura.ne.jp/seyana/upload.cgi?get=00003
+# ■最新版バイナリ(v0.07)
+http://priver.sakura.ne.jp/seyana/upload.cgi?get=00004
 
-+安定版(v0.04)
-  +http://priver.sakura.ne.jp/seyana/upload.cgi?get=00001
++ 安定版(v0.04)
+  + http://priver.sakura.ne.jp/seyana/upload.cgi?get=00001
 
 # ■How to use
 + .net framework 4.6の最新版を以下のURLから落としてインストールします

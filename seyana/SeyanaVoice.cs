@@ -9,11 +9,25 @@ namespace seyana
 {
     class SeyanaVoice
     {
+        private static SeyanaVoice SeyanaVoiceIns = null;
+        public static SeyanaVoice SeyanaVoiceFactory
+        {
+            get
+            {
+                if (SeyanaVoiceIns == null)
+                {
+                    SeyanaVoiceIns = new SeyanaVoice();
+                    return SeyanaVoiceIns;
+                }
+                else return SeyanaVoiceIns;
+            }
+        }
+
         private Dictionary<situation, SoundPlayer> sps;
 
         public enum situation
         {
-            SEYANA
+            SEYANA, YADE
         }
 
         private void init(Dictionary<situation, string> lst)
@@ -26,25 +40,40 @@ namespace seyana
             }
         }
 
-        public SeyanaVoice() {
+        private SeyanaVoice() {
             var defaultDictionary = new Dictionary<situation, string>();
             defaultDictionary[situation.SEYANA] = "seyana_seyana.wav";
+            defaultDictionary[situation.YADE] = "seyana_yade.wav";
 
             init(defaultDictionary);
+            isPlaying = false;
         }
-        public SeyanaVoice(Dictionary<situation, string> dict)
+
+/*        public SeyanaVoice(Dictionary<situation, string> dict)
         {
             init(dict);
-        }
+        } */
 
         private void playSE(situation s)
         {
-            sps[s].Play();
+            if (!isPlaying) Task.Factory.StartNew(() => playSE_run(s));
+        }
+
+        public static bool isPlaying { private set; get; }
+        private void playSE_run(situation s)
+        {
+            isPlaying = true;
+            sps[s].PlaySync();
+            isPlaying = false;
         }
 
         public void playSeyana()
         {
             playSE(situation.SEYANA);
+        }
+        public void playYade()
+        {
+            playSE(situation.YADE);
         }
     }
 }

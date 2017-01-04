@@ -35,7 +35,7 @@ namespace seyana
                 try
                 {
                     cts.Cancel();
-                    t.Wait();
+                    //t.Wait();
                 }
                 catch (TaskCanceledException) { }
             }
