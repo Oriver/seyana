@@ -15,7 +15,6 @@
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem Header="summon" Click="Summon_Clicked"/>
-            <MenuItem Header="timer" Click="Timer_Clicked"/>
             <MenuItem Header="config" Click="Config_Clicked"/>
             <MenuItem Header="quit" Click="Quit_Clicked"/>
         </ContextMenu>

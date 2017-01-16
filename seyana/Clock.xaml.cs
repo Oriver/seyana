@@ -118,7 +118,7 @@ namespace seyana
             timerStop();
         }
 
-        private void Timer_Click(object sender, RoutedEventArgs e)
+        public void Timer_Click(object sender, RoutedEventArgs e)
         {
             if (l.Visibility == Visibility.Visible)
             {
@@ -135,7 +135,9 @@ namespace seyana
         private void keyDown(object sender, KeyEventArgs e)
         {
             base.OnKeyDown(e);
-            try {
+
+            try
+            {
                 if (l.Visibility == Visibility.Hidden && e.Key == Key.Enter)
                 {
                     // 空白は潰す
@@ -186,6 +188,12 @@ namespace seyana
                     }
                 }
             }catch(Exception) { }
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            brain.keyPressed(e);
         }
     }
 }

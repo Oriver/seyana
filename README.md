@@ -10,22 +10,31 @@
 + 時計を右クリックするとタイマーが設定できるぞ
   + 指定した時間の後にｾﾔﾅｰが通知してくれるぞ
 
-# ■最新版バイナリ(v0.07)
-http://priver.sakura.ne.jp/seyana/upload.cgi?get=00004
+# ■最新版バイナリ(v0.08)
+http://priver.sakura.ne.jp/seyana/upload.cgi?get=00005
 
-+ 安定版(v0.04)
-  + http://priver.sakura.ne.jp/seyana/upload.cgi?get=00001
 
 # ■How to use
 + .net framework 4.6の最新版を以下のURLから落としてインストールします
   + https://www.microsoft.com/ja-jp/download/details.aspx?id=53345
 + 最新版バイナリのリンクからダウンロードしたファイルを解答した中のseyana.exeを実行します
 
+# ■便利なショートカットキー
++ C: Config
+  + 設定ウィンドウを呼び出します
++ E: Ebifry
+  + ｾﾔﾅｰの近くにエビフライを呼び出します
++ Q: Quit
+  + ｾﾔﾅｰを帰還します
++ T: Timer
+  + タイマー設定画面に移ります（タイマーの使い方は同梱の説明書を参照）
++ Z: Zanzou
+  + 少なくとも数秒間ｾﾔﾅｰがその場に留まります　タイマーの設定時間を稼ぐのにどうぞ
 
 # ■TODO
 + 「ｾﾔﾅｰ」以外のセリフの実装
 + 機能を増やす
-  + 時計機能が今のところ有力
+  + 次は電卓？メモ？
 
 # ■素材
 + 背景透過ｾﾔﾅｰ：http://seiga.nicovideo.jp/seiga/im5943065

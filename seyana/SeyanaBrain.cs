@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace seyana
@@ -74,13 +75,13 @@ namespace seyana
             thinkTask.start();
         }
 
+        int manpukudo = 0;
         /// <summary>
         /// 思考ルーチン
         /// </summary>
         private void run()
         {
             // エビフライを食べた後大人しくしている時間(秒)
-            int manpukudo = 0;
             int ebisize = 12;
 
             thinkTask.getToken().ThrowIfCancellationRequested();
@@ -310,17 +311,6 @@ namespace seyana
         }
 
         /// <summary>
-        /// 終了時の処理
-        /// syn -> brain
-        /// </summary>
-        public void close()
-        {
-            thinkTask.cancel();
-            moveTask.cancel();
-            clk.end();
-        }
-
-        /// <summary>
         /// セヤナーがクリックされたときの処理
         /// syn -> brain
         /// </summary>
@@ -332,6 +322,44 @@ namespace seyana
                 queue.Enqueue(qtask.JUMP);
                 syn.say("ｾﾔﾅｰ");
                 voice.playSeyana();
+            }
+        }
+
+        /// <summary>
+        /// キーイベント
+        /// </summary>
+        /// <param name="k">押されたキー</param>
+        public void keyPressed(KeyEventArgs k)
+        {
+            switch(k.Key)
+            {
+                case Key.C:
+                    {
+                        openConfig();
+                        break;
+                    }
+                case Key.E:
+                    {
+                        syn.createEbi();
+                        break;
+                    }
+                case Key.Q:
+                    {
+                        syn.Quit_Clicked(null, null);
+                        break;
+                    }
+                case Key.T:
+                    {
+                        clk.Timer_Click(null, null);
+                        clk.Activate();
+                        break;
+                    }
+                case Key.Z:
+                    {
+                        manpukudo = 5 * FPS;
+                        if (nowMoveMode == moveMode.RANDOMWALK) nowMoveMode = moveMode.STAND;
+                        break;
+                    }
             }
         }
 
@@ -389,5 +417,17 @@ namespace seyana
 
             cw.Close();
         }
+
+        /// <summary>
+        /// 終了時の処理
+        /// syn -> brain
+        /// </summary>
+        public void close()
+        {
+            thinkTask.cancel();
+            moveTask.cancel();
+            clk.end();
+        }
+
     }
 }

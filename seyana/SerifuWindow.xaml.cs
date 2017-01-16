@@ -20,6 +20,7 @@ namespace seyana
     public partial class SerifuWindow : Window
     {
         MainWindow mw;
+        SeyanaBrain brain;
         public int w { private set; get; }
         public int h { private set; get; }
         public SerifuWindow()
@@ -27,6 +28,7 @@ namespace seyana
             InitializeComponent();
             w = (int)Width;
             h = (int)Height;
+            brain = SeyanaBrain.SeyanaBrainFactory;
         }
         public SerifuWindow(MainWindow mw): this()
         {
@@ -46,6 +48,11 @@ namespace seyana
         {
             base.OnMouseLeftButtonDown(e);
             Hide();
+        }
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            brain.keyPressed(e);
         }
     }
 }

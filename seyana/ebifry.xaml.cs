@@ -27,12 +27,16 @@ namespace seyana
 
         public bool live;
 
+        SeyanaBrain brain;
+
         public Util.rect toRect() { return new Util.rect(x, y, w, h); }
         public Point toPoint() { return new Point(x, y); }
 
         public ebifry()
         {
             InitializeComponent();
+
+            brain = SeyanaBrain.SeyanaBrainFactory;
 
             Show();
             var p0 = PointToScreen(new Point(0, 0));
@@ -74,6 +78,11 @@ namespace seyana
             var pt = PointToScreen(new Point(0, 0));
             x = (int)Math.Abs(pt.X);
             y = (int)Math.Abs(pt.Y);
+        }
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            brain.keyPressed(e);
         }
     }
 }

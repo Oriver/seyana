@@ -126,7 +126,7 @@ namespace seyana
         /// <summary>
         /// summon ebifry
         /// </summary>
-        private void createEbi()
+        public void createEbi()
         {
             // 前のがまだ生きてたら召喚しない
             if (ebi.live) return;
@@ -211,12 +211,7 @@ namespace seyana
             createEbi();
         }
 
-        private void Timer_Clicked(object sender, RoutedEventArgs args)
-        {
-            brain.setTimer(0, 0, 10);
-        }
-
-        private void Config_Clicked(object sender, RoutedEventArgs args)
+        public void Config_Clicked(object sender, RoutedEventArgs args)
         {
             brain.openConfig();
         }
@@ -226,7 +221,7 @@ namespace seyana
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        private void Quit_Clicked(object sender, RoutedEventArgs args)
+        public void Quit_Clicked(object sender, RoutedEventArgs args)
         {
             brain.close();
             Close();
@@ -236,6 +231,12 @@ namespace seyana
         {
             base.OnMouseLeftButtonDown(e);
             brain.clicked();
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            brain.keyPressed(e);
         }
 
         protected override void OnClosed(EventArgs e)
