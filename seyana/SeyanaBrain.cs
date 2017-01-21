@@ -27,12 +27,18 @@ namespace seyana
         private SeyanaBrain() {
             thinkTask = new Util.TaskManage(run);
             moveTask = new Util.TaskManage(move);
+
+            var cc = configContainer.load();
+            scale = cc.scale;
+            speed = cc.speed;
+            randomWalkThreshold = cc.randomWalkThreshold;
         }
 
         public const int FPS = 30;
-        public static double scale = 1;
+        public double scale { private set; get; }
+        public double speed { private set; get; }
         // ランダムウォークが発生する確率
-        public static double randomWalkThreshold = 0.02;
+        public double randomWalkThreshold { private set; get; }
 
         private Util.TaskManage thinkTask = null;
         private Util.TaskManage moveTask = null;
@@ -67,8 +73,6 @@ namespace seyana
             nowMoveMode = moveMode.STAND;
 
             queue = new Queue<qtask>();
-
-            speed = 8;
 
             moveSeyana(MainWindow.x, MainWindow.y);
             moveTask.start();
@@ -123,8 +127,8 @@ namespace seyana
                                 {
                                     manpukudo = ebisize * FPS;
 
-                                    int dx = (MainWindow.x + MainWindow.w / 2) - (ebi.x + ebi.w / 2);
-                                    int dy = (MainWindow.y + MainWindow.h / 2) - (ebi.y + ebi.h / 2);
+                                    int dx = (MainWindow.x + syn.w / 2) - (ebi.x + ebi.w / 2);
+                                    int dy = (MainWindow.y + syn.h / 2) - (ebi.y + ebi.h / 2);
                                     if (dx * dx + dy * dy < 75 * 75) ebi.eaten();
                                 } else
                                 {
@@ -160,6 +164,7 @@ namespace seyana
 
                     if (manpukudo > 0) manpukudo--;
 
+                    syn.setScale();
                     System.Threading.Thread.Sleep(1000 / FPS);
                 }
             }catch(OperationCanceledException) { }
@@ -167,15 +172,14 @@ namespace seyana
 
         private void randomWalk()
         {
-            toX = Util.rnd.Next(MainWindow.w, Util.screenwidth - MainWindow.w);
-            toY = Util.rnd.Next(MainWindow.h, Util.screenheight - MainWindow.h);
+            toX = Util.rnd.Next(syn.w, Util.screenwidth - syn.w);
+            toY = Util.rnd.Next(syn.h, Util.screenheight - syn.h);
             nowMoveMode = moveMode.RANDOMWALK;
         }
 
         private int toX, toY;
         private int centX, centY;
         double move_t = 0;
-        public double speed { private set; get; }
 
         /// <summary>
         /// seyana move
@@ -185,8 +189,8 @@ namespace seyana
         private void moveSeyana(int x, int y)
         {
             moveOnlySeyana(x, y);
-            syn.setPositionInvoke(sw, x + MainWindow.w / 2 - sw.w / 2, y +MainWindow.h / 4 - sw.h);
-            syn.setPositionInvoke(clk, x + MainWindow.w / 2 - clk.w / 2, y + MainWindow.h);
+            syn.setPositionInvoke(sw, x + syn.w / 2 - sw.w / 2, y + syn.h / 4 - sw.h);
+            syn.setPositionInvoke(clk, x + syn.w / 2 - clk.w / 2, y + syn.h);
         }
         private void moveOnlySeyana(int x, int y)
         {
@@ -217,8 +221,8 @@ namespace seyana
                             }
                         case moveMode.EBI:
                             {
-                                int dx = (ebi.x + ebi.w / 2) - (x + MainWindow.w / 2);
-                                int dy = (ebi.y + ebi.h / 2) - (y + MainWindow.h / 2);
+                                int dx = (ebi.x + ebi.w / 2) - (x + syn.w / 2);
+                                int dy = (ebi.y + ebi.h / 2) - (y + syn.h / 2);
                                 double dst = Math.Sqrt(dx * dx + dy * dy);
                                 if (dst > 70)
                                 {
@@ -293,8 +297,8 @@ namespace seyana
                                 }
                                 double dst = Util.rnd.NextDouble() * 60;
                                 double dir = Util.rnd.NextDouble() * 2 * Math.PI;
-                                x = (int)(centX + dst * Math.Cos(dir) - MainWindow.w / 2);
-                                y = (int)(centY + dst * Math.Sin(dir) - MainWindow.h / 2);
+                                x = (int)(centX + dst * Math.Cos(dir) - syn.w / 2);
+                                y = (int)(centY + dst * Math.Sin(dir) - syn.h / 2);
 
                                 moveOnlySeyana(x, y);
 
@@ -380,8 +384,8 @@ namespace seyana
         /// </summary>
         public void endTimer()
         {
-            centX = MainWindow.x + MainWindow.w / 2;
-            centY = MainWindow.y + MainWindow.h / 2;
+            centX = MainWindow.x + syn.w / 2;
+            centY = MainWindow.y + syn.h / 2;
             queue.Enqueue(qtask.TIMER_ARABURI);
         }
         public void timerClicked()
@@ -404,18 +408,16 @@ namespace seyana
         /// </summary>
         /// <param name="ce">OKが押されたのかキャンセルされたのか</param>
         /// <param name="cw">コンフィグ内容</param>
-        public void closeConfig(ConfigWindow.ConfigEvent ce, ConfigWindow cw)
+        public void closeConfig(ConfigWindow.ConfigEvent ce, configContainer cc)
         {
             if(ce == ConfigWindow.ConfigEvent.OKEVENT)
             {
-                scale = cw.scale;
-                speed = cw.speed;
-                randomWalkThreshold = cw.randomWalkThreashold;
+                scale = cc.scale;
+                speed = cc.speed;
+                randomWalkThreshold = cc.randomWalkThreshold;
                 syn.setScale();
                 moveSeyana(MainWindow.x, MainWindow.y);
             }
-
-            cw.Close();
         }
 
         /// <summary>
@@ -427,6 +429,7 @@ namespace seyana
             thinkTask.cancel();
             moveTask.cancel();
             clk.end();
+            new configContainer().save();
         }
 
     }

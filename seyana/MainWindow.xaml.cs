@@ -29,19 +29,19 @@ namespace seyana
         public static int y { get; private set; }
         private const int WIDTH = 300, HEIGHT = 300;
         private static int width, height;
-        public static int w
+        public int w
         {
             get
             {
-                return (int)(width * SeyanaBrain.scale);
+                return (int)(width * brain.scale);
             }
             private set { width = value; }
         }
-        public static int h
+        public int h
         {
             get
             {
-                return (int)(height * SeyanaBrain.scale);
+                return (int)(height * brain.scale);
             }
             private set { height = value; }
         }
@@ -140,17 +140,17 @@ namespace seyana
                 ebi.y = (int)y0;
                 setPosition(ebi, (int)x0, (int)y0);
             } while (!Util.isInScreen(ebi.toRect()));
-            ebi.spawn((int)(100 / SeyanaBrain.scale / SeyanaBrain.scale));
+            ebi.spawn((int)(100 / brain.scale / brain.scale));
         }
 
         public void setScale()
         {
             Dispatcher.Invoke(() =>
             {
-                Width = WIDTH * SeyanaBrain.scale;
-                Height = HEIGHT * SeyanaBrain.scale;
-                invert.ScaleX = SeyanaBrain.scale * (invert.ScaleX < 0 ? -1 : 1);
-                invert.ScaleY = SeyanaBrain.scale * (invert.ScaleY < 0 ? -1 : 1);
+                Width = WIDTH * brain.scale;
+                Height = HEIGHT * brain.scale;
+                invert.ScaleX = brain.scale * (invert.ScaleX < 0 ? -1 : 1);
+                invert.ScaleY = brain.scale * (invert.ScaleY < 0 ? -1 : 1);
             });
             
         }
