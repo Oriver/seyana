@@ -10,8 +10,8 @@
 + 時計を右クリックするとタイマーが設定できるぞ
   + 指定した時間の後にｾﾔﾅｰが通知してくれるぞ
 
-# ■最新版バイナリ(v0.08)
-http://priver.sakura.ne.jp/seyana/upload.cgi?get=00005
+# ■最新版バイナリ(v0.09)
+http://priver.sakura.ne.jp/seyana/upload.cgi?get=00006
 
 
 # ■How to use

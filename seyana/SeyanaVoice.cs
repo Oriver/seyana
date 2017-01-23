@@ -27,7 +27,7 @@ namespace seyana
 
         public enum situation
         {
-            SEYANA, YADE
+            SEYANA, YADE, EBIFRY
         }
 
         private void init(Dictionary<situation, string> lst)
@@ -44,6 +44,7 @@ namespace seyana
             var defaultDictionary = new Dictionary<situation, string>();
             defaultDictionary[situation.SEYANA] = "seyana_seyana.wav";
             defaultDictionary[situation.YADE] = "seyana_yade.wav";
+            defaultDictionary[situation.EBIFRY] = "seyana_ebifry.wav";
 
             init(defaultDictionary);
             isPlaying = false;
@@ -74,6 +75,10 @@ namespace seyana
         public void playYade()
         {
             playSE(situation.YADE);
+        }
+        public void playEbifry()
+        {
+            playSE(situation.EBIFRY);
         }
     }
 }

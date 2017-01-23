@@ -152,6 +152,7 @@ namespace seyana
                         if (ebi.live)
                         {
                             nowMoveMode = moveMode.EBI;
+                            voice.playEbifry();
                         }
                         // ランダムウォーク判定
                         // 移動中でないかつランダムウォーク判定に成功するとランダムウォークが起こる
@@ -242,6 +243,7 @@ namespace seyana
                                 }
 
                                 sw.hide();
+                                if (Util.rnd.NextDouble() < 0.05) voice.playEbifry();
                                 break;
                             }
                         case moveMode.RANDOMWALK:
@@ -292,6 +294,7 @@ namespace seyana
                                 {
                                     Console.WriteLine("move");
                                     nowMoveMode = moveMode.EBI;
+                                    voice.playEbifry();
                                     queue.Dequeue();
                                     break;
                                 }
